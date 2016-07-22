@@ -5,6 +5,12 @@ var UserSchema = new mongoose.Schema({
     username: String,
     password: String
 });
+UserSchema.methods.toJSON = function () {
+    var user = this.toObject();
+    delete user.password;
+
+    return user;
+};
 
 UserSchema.pre('save', function (next) {
     var user = this;
