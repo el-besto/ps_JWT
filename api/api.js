@@ -1,5 +1,8 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var User = require('./models/User');
+
 var app = express();
 
 app.use(bodyParser.json());
@@ -14,9 +17,17 @@ app.use(function (req, res, next) {
 });
 
 app.post('/register', function (req, res) {
-    console.log(req.body);
-    res.send(req.body);
+    var user = req.body;
+    var newUser = new User.model({
+        username: user.username,
+        password: user.password
+    });
+    newUser.save(function (err) {
+        res.status(200).send(newUser);
+    });
 });
+
+mongoose.connect('mongodb://localhost/psjwt');
 
 var server = app.listen(3000, function () {
     console.log('api listening on ', server.address().port);
