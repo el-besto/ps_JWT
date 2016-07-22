@@ -14,10 +14,10 @@ angular.module('psJwtApp')
         $scope.submit = function () {
             $http.post(url, user)
                 .then(function (res) {
-                    console.log(res);
+                    alert('success', 'OK!', 'You are now registered.');
                 })
                 .catch(function (err) {
-                    alert('warning', 'Oops', 'Could not register');
+                    alert('warning', 'Oops', 'Could not register.');
                 });
         };
     });
