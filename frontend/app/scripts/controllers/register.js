@@ -9,9 +9,14 @@
  */
 angular.module('psJwtApp')
     .controller('RegisterController', function ($scope, $http, alert) {
-        var url = '/';
-        var user = {};
+
         $scope.submit = function () {
+            var url = 'http://localhost:3000/register';
+            var user = {
+                username: $scope.username,
+                password: $scope.password
+            };
+
             $http.post(url, user)
                 .then(function (res) {
                     alert('success', 'OK!', 'You are now registered.');
