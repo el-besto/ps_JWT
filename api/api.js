@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var User = require('./models/User');
+var jwt = require('./services/jwt');
 
 var app = express();
 
@@ -18,12 +19,24 @@ app.use(function (req, res, next) {
 
 app.post('/register', function (req, res) {
     var user = req.body;
+
     var newUser = new User.model({
         username: user.username,
         password: user.password
     });
+
+    var payload = {
+        iss: req.hostname,
+        sub: user._id
+    };
+
+    var token = jwt.encode(payload, "temporarySecretKey");
+
     newUser.save(function (err) {
-        res.status(200).send(newUser.toJSON());
+        res.status(200).send({
+            user: newUser.toJSON(),
+            token: token
+        });
     });
 });
 
