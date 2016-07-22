@@ -8,7 +8,7 @@
  * Controller of the psJwtApp
  */
 angular.module('psJwtApp')
-    .controller('RegisterController', function ($scope, $http) {
+    .controller('RegisterController', function ($scope, $http, alert) {
         var url = '/';
         var user = {};
         $scope.submit = function () {
@@ -17,7 +17,7 @@ angular.module('psJwtApp')
                     console.log(res);
                 })
                 .catch(function (err) {
-                    console.error(err);
+                    alert('warning', 'Oops', 'Could not register');
                 });
         };
     });
