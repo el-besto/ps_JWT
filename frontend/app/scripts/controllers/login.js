@@ -2,16 +2,15 @@
 
 /**
  * @ngdoc function
- * @name psJwtApp.controller:RegisterController
+ * @name psJwtApp.controller:LoginController
  * @description
- * # RegisterController
+ * # LoginController
  * Controller of the psJwtApp
  */
 angular.module('psJwtApp')
-    .controller('RegisterController', function ($scope, $http, alert, authToken, API_URL) {
-
+    .controller('LoginController', function ($scope, $http, alert, authToken, API_URL) {
         $scope.submit = function () {
-            var url = API_URL + 'register';
+            var url = API_URL + 'login';
             var user = {
                 username: $scope.username,
                 password: $scope.password
@@ -19,7 +18,7 @@ angular.module('psJwtApp')
 
             $http.post(url, user)
                 .then(function (res) {
-                    alert('success', 'Account Created!', 'Welcome ' + res.data.user.username + '!');
+                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.data.user.username + '!');
                     authToken.setToken(res.data.token);
                 })
                 .catch(function (err) {
