@@ -40,6 +40,21 @@ app.post('/register', function (req, res) {
     });
 });
 
+// securing an endpoint with jwt
+var jobs = [
+    'laundry',
+    'trash',
+    'yard work'
+];
+app.get('/jobs', function(req, res) {
+    if (!req.headers.authorization) {
+        return res.status(401).send({
+            message: 'You are not authorized'
+        });
+    }
+    res.json(jobs);
+});
+
 mongoose.connect('mongodb://localhost/psjwt');
 
 var server = app.listen(3000, function () {
