@@ -16,5 +16,10 @@ angular.module('psJwtApp')
             .state('logout', {
                 url: '/logout',
                 controller: 'LogoutController'
+            })
+            .state('jobs', {
+                url: '/jobs',
+                templateUrl: '/views/jobs.html',
+                controller: 'JobsController'
             });
     });
