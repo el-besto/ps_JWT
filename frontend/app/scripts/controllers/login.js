@@ -2,19 +2,17 @@
 
 /**
  * @ngdoc function
- * @name psJwtApp.controller:RegisterController
+ * @name psJwtApp.controller:LoginController
  * @description
- * # RegisterController
+ * # LoginController
  * Controller of the psJwtApp
  */
 angular.module('psJwtApp')
-    .controller('RegisterController', function ($scope, alert, auth) {
-
+    .controller('LoginController', function ($scope, alert, auth) {
         $scope.submit = function () {
-            auth.register($scope.username, $scope.password)
+            auth.login($scope.username, $scope.password)
                 .then(function (res) {
-                    var username = res.data.user.username;
-                    alert('success', 'Account Created!', 'Welcome ' + username + '!');
+                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.data.user.username + '!');
                 })
                 .catch(function (err) {
                     alert('warning', 'Something went wrong', err.data.message);

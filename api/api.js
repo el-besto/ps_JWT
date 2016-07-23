@@ -17,25 +17,54 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.post('/register', function (req, res) {
-    var user = req.body;
-
-    var newUser = new User.model({
-        username: user.username,
-        password: user.password
-    });
-
+function createAndSendToken(user, req, res) {
     var payload = {
         iss: req.hostname,
-        sub: newUser.id
+        sub: user.id
     };
 
     var token = jwt.encode(payload, "temporarySecretKey");
 
+    res.status(200).send({
+        user: user.toJSON(),
+        token: token
+    });
+}
+
+app.post('/register', function (req, res) {
+    var user = req.body;
+
+    var newUser = new User({
+        username: user.username,
+        password: user.password
+    });
+
     newUser.save(function (err) {
-        res.status(200).send({
-            user: newUser.toJSON(),
-            token: token
+        createAndSendToken(newUser, req, res);
+    });
+});
+
+app.post('/login', function (req, res) {
+    req.user = req.body;
+    var searchUser = {
+        username: req.user.username
+    };
+
+    User.findOne(searchUser, function (err, foundUser) {
+        if (err) { throw err; }
+        if (!foundUser) {
+            return res.status(401).send({
+                message: 'Wrong username/password'
+            });
+        }
+        foundUser.comparePasswords(req.user.password, function (err, isMatch) {
+            if (err) { throw err; }
+            if (!isMatch) {
+                return res.status(401).send({
+                    message: 'Wrong username/password'
+                });
+            }
+            createAndSendToken(foundUser, req, res);
         });
     });
 });

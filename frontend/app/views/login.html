@@ -1,0 +1,35 @@
+<form name="register"
+      class="form-signin"
+      novalidate>
+    <h1 class="form-signin-heading text-muted">
+        Login
+    </h1>
+    <input name="username"
+           ng-model="username"
+           type="email"
+           class="form-control"
+           placeholder="Email address"
+           autofocus=""
+           required />
+    <p class="help-block"
+       ng-show="register.username.$dirty && register.username.$invalid">
+        please enter a proper email address.
+    </p>
+    <input name="password"
+           ng-model="password"
+           type="password"
+           class="form-control"
+           placeholder="Password"
+           required />
+    <button class="btn btn-lg btn-primary btn-block"
+            ng-disabled="register.$invalid"
+            ng-click="submit()"
+            type="submit">
+        Submit
+    </button>
+    <br>
+    <a class="text-muted pull-right"
+       ui-sref="register">
+        Create account
+    </a>
+</form>
