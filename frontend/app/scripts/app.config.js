@@ -11,6 +11,10 @@ angular.module('psJwtApp')
             .state('register', {
                 url: '/register',
                 templateUrl: '/views/register.html',
-                controller: 'RegisterController',
+                controller: 'RegisterController'
+            })
+            .state('logout', {
+                url: '/logout',
+                controller: 'LogoutController'
             });
     });

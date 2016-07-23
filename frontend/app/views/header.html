@@ -23,10 +23,16 @@
                             Home
                         </a>
                     </li>
-                    <li ng-if="!isAuthenticated"
+                    <li ng-hide="isAuthenticated()"
                         ui-sref-active="active">
                         <a ui-sref="register">
                             Register
+                        </a>
+                    </li>
+                    <li ng-show="isAuthenticated()"
+                        ui-sref-active="active">
+                        <a ui-sref="logout">
+                            Logout
                         </a>
                     </li>
                 </ul>
