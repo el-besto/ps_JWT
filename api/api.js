@@ -36,10 +36,20 @@ function createAndSendToken(user, req, res) {
 }
 
 // PASSPORT config
-passport.serializeUser(function (user, done) {
-    done(null, user.id);
+var strategyOptions = {
+    usernameField: 'username'
+};
+var registerStrategy = new LocalStrategy(strategyOptions, function (username, password, done) {
+    var newUser = new User({
+        username: username,
+        password: password
+    });
+
+    newUser.save(function (err) {
+        done(null, newUser);
+    });
 });
-var strategy = new LocalStrategy({}, function (username, password, done) {
+var loginStrategy = new LocalStrategy(strategyOptions, function (username, password, done) {
     var searchUser = {
         username: username
     };
@@ -61,22 +71,16 @@ var strategy = new LocalStrategy({}, function (username, password, done) {
         });
     });
 });
-passport.use(strategy);
-
-app.post('/register', function (req, res) {
-    var user = req.body;
-
-    var newUser = new User({
-        username: user.username,
-        password: user.password
-    });
-
-    newUser.save(function (err) {
-        createAndSendToken(newUser, req, res);
-    });
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
 });
+passport.use('local-register', registerStrategy);
+passport.use('local-login', loginStrategy);
 
-app.post('/login', passport.authenticate('local'), function (req, res) {
+app.post('/register', passport.authenticate('local-register'), function (req, res) {
+    createAndSendToken(req.user, req, res);
+});
+app.post('/login', passport.authenticate('local-login'), function (req, res) {
     createAndSendToken(req.user, req, res);
 });
 
