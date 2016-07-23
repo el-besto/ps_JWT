@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var User = require('./models/User');
+var jwt = require('jwt-simple');
 
 var app = express();
 
@@ -18,13 +19,51 @@ app.use(function (req, res, next) {
 
 app.post('/register', function (req, res) {
     var user = req.body;
+
     var newUser = new User.model({
         username: user.username,
         password: user.password
     });
+
+    var payload = {
+        iss: req.hostname,
+        sub: newUser.id
+    };
+
+    var token = jwt.encode(payload, "temporarySecretKey");
+
     newUser.save(function (err) {
-        res.status(200).send(newUser.toJSON());
+        res.status(200).send({
+            user: newUser.toJSON(),
+            token: token
+        });
     });
+});
+
+// securing an endpoint with jwt
+var jobs = [
+    'laundry',
+    'trash',
+    'yard work'
+];
+app.get('/jobs', function(req, res) {
+    var token;
+    var payload;
+    if (!req.headers.authorization) {
+        return res.status(401).send({
+            message: 'You are not authorized'
+        });
+    }
+    token = req.headers.authorization.split(' ')[1];
+    payload = jwt.decode(token, "temporarySecretKey");
+
+    if (!payload.sub) {
+        res.status(401).send({
+            message: 'You are not authorized.'
+        });
+    }
+
+    res.json(jobs);
 });
 
 mongoose.connect('mongodb://localhost/psjwt');

@@ -8,7 +8,7 @@
  * Controller of the psJwtApp
  */
 angular.module('psJwtApp')
-    .controller('RegisterController', function ($scope, $http, alert) {
+    .controller('RegisterController', function ($scope, $http, alert, authToken) {
 
         $scope.submit = function () {
             var url = 'http://localhost:3000/register';
@@ -19,7 +19,8 @@ angular.module('psJwtApp')
 
             $http.post(url, user)
                 .then(function (res) {
-                    alert('success', 'OK!', 'You are now registered.');
+                    alert('success', 'Account Created!', 'Welcome ' + res.data.user.username + '!');
+                    authToken.setToken(res.data.token);
                 })
                 .catch(function (err) {
                     alert('warning', 'Oops', 'Could not register.');
