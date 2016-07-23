@@ -1,12 +1,16 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var User = require('./models/User');
 var jwt = require('jwt-simple');
+var mongoose = require('mongoose');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var User = require('./models/User');
+
 
 var app = express();
 
 app.use(bodyParser.json());
+app.use(passport.initialize());
 
 // enable CORS for this server
 app.use(function (req, res, next) {
@@ -31,42 +35,65 @@ function createAndSendToken(user, req, res) {
     });
 }
 
-app.post('/register', function (req, res) {
-    var user = req.body;
+// PASSPORT config
+var strategyOptions = {
+    usernameField: 'username'
+};
+var registerStrategy = new LocalStrategy(strategyOptions, function (username, password, done) {
+    var newUser;
+    var searchUser = {
+        username: username
+    };
+    User.findOne(searchUser, function (err, user) {
+        if (err) { return done(err); }
+        if (user) {
+            return done(null, false, {
+                message: 'Username already exists.'
+            });
+        }
+        newUser = new User({
+            username: username,
+            password: password
+        });
 
-    var newUser = new User({
-        username: user.username,
-        password: user.password
-    });
-
-    newUser.save(function (err) {
-        createAndSendToken(newUser, req, res);
+        newUser.save(function (err) {
+            done(null, newUser);
+        });
     });
 });
-
-app.post('/login', function (req, res) {
-    req.user = req.body;
+var loginStrategy = new LocalStrategy(strategyOptions, function (username, password, done) {
     var searchUser = {
-        username: req.user.username
+        username: username
     };
-
-    User.findOne(searchUser, function (err, foundUser) {
-        if (err) { throw err; }
-        if (!foundUser) {
-            return res.status(401).send({
+    User.findOne(searchUser, function (err, user) {
+        if (err) { return done(err); }
+        if (!user) {
+            return done(null, false, {
                 message: 'Wrong username/password'
             });
         }
-        foundUser.comparePasswords(req.user.password, function (err, isMatch) {
-            if (err) { throw err; }
+        user.comparePasswords(password, function (err, isMatch) {
+            if (err) { return done(err); }
             if (!isMatch) {
-                return res.status(401).send({
+                return done(null, false, {
                     message: 'Wrong username/password'
                 });
             }
-            createAndSendToken(foundUser, req, res);
+            return done(null, user);
         });
     });
+});
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+});
+passport.use('local-register', registerStrategy);
+passport.use('local-login', loginStrategy);
+
+app.post('/register', passport.authenticate('local-register'), function (req, res) {
+    createAndSendToken(req.user, req, res);
+});
+app.post('/login', passport.authenticate('local-login'), function (req, res) {
+    createAndSendToken(req.user, req, res);
 });
 
 // securing an endpoint with jwt
