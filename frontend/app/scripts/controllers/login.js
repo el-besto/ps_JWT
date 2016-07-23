@@ -18,4 +18,8 @@ angular.module('psJwtApp')
                     alert('warning', 'Something went wrong', err.data.message);
                 });
         };
+
+        $scope.google = function () {
+            auth.googleAuth().then().catch();
+        };
     });
