@@ -34,7 +34,7 @@ function createAndSendToken(user, req, res) {
 app.post('/register', function (req, res) {
     var user = req.body;
 
-    var newUser = new User.model({
+    var newUser = new User({
         username: user.username,
         password: user.password
     });
@@ -57,7 +57,7 @@ app.post('/login', function (req, res) {
                 message: 'Wrong username/password'
             });
         }
-        foundUser.comparePasswords(req.user.password, function(err, isMatch) {
+        foundUser.comparePasswords(req.user.password, function (err, isMatch) {
             if (err) { throw err; }
             if (!isMatch) {
                 return res.status(401).send({
