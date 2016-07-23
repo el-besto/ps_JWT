@@ -76,14 +76,8 @@ app.post('/register', function (req, res) {
     });
 });
 
-app.post('/login', function (req, res, next) {
-    passport.authenticate('local', function (err, user) {
-        if (err) { next(err); }
-        req.login(user, function (err) {
-            if (err) { next(err); }
-            createAndSendToken(user, req, res);
-        });
-    })(req, res, next);
+app.post('/login', passport.authenticate('local'), function (req, res) {
+    createAndSendToken(req.user, req, res);
 });
 
 // securing an endpoint with jwt
