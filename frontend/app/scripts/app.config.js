@@ -31,4 +31,21 @@ angular.module('psJwtApp')
 
         $httpProvider.interceptors.push('authInterceptor');
     })
-    .constant('API_URL', 'http://localhost:3000/');
+    .constant('API_URL', 'http://localhost:3000/')
+    .run(function ($window) {
+        var code;
+        var isOauthPopup;
+        var pair;
+        var params;
+        // ensure that we are in the Oauth popup window
+        isOauthPopup = function () {
+            params = $window.location.search.substring(1);
+            return (params && $window.opener && $window.opener.location.origin === $window.location.origin);
+        };
+        if (isOauthPopup()) {
+            pair = params.split('=');
+            code = decodeURIComponent(pair[1]);
+            // communicate auth code back to our main window
+            $window.opener.postMessage(code, $window.location.origin);
+        }
+    });
