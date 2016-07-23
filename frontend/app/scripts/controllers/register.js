@@ -17,7 +17,7 @@ angular.module('psJwtApp')
                     alert('success', 'Account Created!', 'Welcome ' + username + '!');
                 })
                 .catch(function (err) {
-                    alert('warning', 'Something went wrong', err.data.message);
+                    alert('warning', 'Something went wrong', 'Username exists. Please login.');
                 });
         };
     });
