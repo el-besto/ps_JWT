@@ -32,6 +32,10 @@ angular.module('psJwtApp')
         // satellizer config
         $authProvider.loginUrl = API_URL + 'login';
         $authProvider.signupUrl = API_URL + 'register';
+        $authProvider.facebook({
+            clientId: 'FACEBOOK_CLIENT_ID',
+            url: API_URL + 'auth/facebook'
+        });
         $authProvider.google({
             clientId: 'someGoogleClientId',
             url: API_URL + 'auth/google'
