@@ -30,6 +30,8 @@ angular.module('psJwtApp')
             });
 
         // satellizer config
+        $authProvider.loginUrl = API_URL + 'login';
+        $authProvider.signupUrl = API_URL + 'register';
         $authProvider.google({
             clientId: 'someGoogleClientId',
             url: API_URL + 'auth/google'

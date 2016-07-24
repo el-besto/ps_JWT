@@ -8,10 +8,15 @@
  * Controller of the psJwtApp
  */
 angular.module('psJwtApp')
-    .controller('RegisterController', function ($scope, alert, auth) {
+    .controller('RegisterController', function ($scope, $auth, alert) {
 
         $scope.submit = function () {
-            auth.register($scope.username, $scope.password)
+            var newUser = {
+                username: $scope.username,
+                password: $scope.password
+            };
+
+            $auth.signup(newUser)
                 .then(function (res) {
                     var username = res.data.user.username;
                     alert('success', 'Account Created!', 'Welcome ' + username + '!');
