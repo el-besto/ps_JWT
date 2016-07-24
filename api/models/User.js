@@ -6,7 +6,8 @@ var UserSchema = new mongoose.Schema({
     password: String,
     facebookId: String,
     googleId: String,
-    displayName: String
+    displayName: String,
+    active: Boolean
 });
 
 UserSchema.methods.comparePasswords = function (password, next) {

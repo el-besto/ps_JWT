@@ -2,11 +2,11 @@ var config = require('./config');
 var jwt = require('jwt-simple');
 var moment = require('moment');
 
-module.exports = function createAndSendToken(user, req, res) {
+module.exports = function createAndSendToken(user, hostname, res) {
     var payload = {
-        iss: req.hostname,
+        iss: hostname,
         sub: user.id,
-        ext: moment().add(10, 'days').unix()
+        exp: moment().add(10, 'days').unix()
     };
     var token = jwt.encode(payload, config.TOKEN_SECRET);
 

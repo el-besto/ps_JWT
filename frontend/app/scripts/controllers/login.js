@@ -22,7 +22,11 @@ angular.module('psJwtApp')
 
             $auth.login(user)
                 .then(function (res) {
-                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.data.user.username + '!');
+                    var message = 'Thanks for coming back ' + res.data.user.username + '!'
+                    if (!res.data.user.active) {
+                        message = 'Just a reminder, please activate your account soon :)';
+                    }
+                    alert('success', 'Welcome!', message);
                     $state.go('main');
                 })
                 .catch(errorHandler);

@@ -29,13 +29,13 @@ module.exports = function (req, res) {
 
             User.findOne({ facebookId: profile.id }, function (err, existingUser) {
                 if (existingUser) {
-                    return createAndSendToken(existingUser, req, res);
+                    return createAndSendToken(existingUser, req.hostname, res);
                 }
                 newUser = new User();
                 newUser.facebookId = profile.id;
                 newUser.displayName = profile.name;
                 newUser.save(function (err) {
-                    return createAndSendToken(newUser, req, res);
+                    return createAndSendToken(newUser, req.hostname, res);
                 });
             });
         });
