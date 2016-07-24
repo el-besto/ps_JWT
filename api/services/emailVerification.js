@@ -2,6 +2,7 @@ var _ = require('lodash');
 var config = require('./config');
 var fs = require('fs');
 var jwt = require('jwt-simple');
+var nodemailer = require('nodemailer');
 
 var emailModel = {
     verifyUrl: 'http://localhost:3000/auth/verifyEmail?token=',
@@ -23,12 +24,31 @@ function getHtml(token) {
     return template(emailModel);
 }
 
-exports.send = function (email) {
+exports.send = function (email, res) {
     var payload = {
         sub: email
     };
     var token = jwt.encode(payload, config.EMAIL_SECRET);
 
-    // Verify that the file is being read and template values injected.
-    console.log(getHtml(token));
+    var transporter = nodemailer.createTransport({
+        host: config.EMAIL_HOST,
+        port: config.EMAIL_HOST_PORT,
+        secure: true,
+        auth: {
+            user: config.EMAIL_USERNAME,
+            pass: config.EMAIL_PASSWORD
+        }
+    });
+
+    var mailOptions = {
+        from: 'Accounts <'+ config.EMAIL_ADMIN_EMAIL +'>',
+        to: email,
+        subject: 'psJWT Account Verification',
+        html: getHtml(token)
+    };
+
+    transporter.sendMail(mailOptions, function (err, info) {
+        if (err) { return res.status(500, err); }
+        console.log('email sent ', info.response);
+    })
 };
