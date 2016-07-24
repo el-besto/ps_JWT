@@ -2,6 +2,7 @@ var bodyParser = require('body-parser');
 var config = require('./services/config');
 var cors = require('./services/cors');
 var createAndSendToken = require('./services/jwt');
+var emailVerification = require('./services/emailVerification');
 var express = require('express');
 var facebookAuth = require('./services/facebookAuth');
 var googleAuth = require('./services/googleAuth');
@@ -10,6 +11,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('./services/localStrategy');
 
+emailVerification.send('fake@example.com');
 
 var app = express();
 app.use(bodyParser.json());
