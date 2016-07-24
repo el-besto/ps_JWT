@@ -6,7 +6,7 @@ module.exports = function createAndSendToken(user, req, res) {
     var payload = {
         iss: req.hostname,
         sub: user.id,
-        ext: moment().add(10, 'days').unix()
+        exp: moment().add(10, 'days').unix()
     };
     var token = jwt.encode(payload, config.TOKEN_SECRET);
 
