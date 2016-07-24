@@ -19,7 +19,8 @@ angular.module('psJwtApp')
             $auth.signup(newUser)
                 .then(function (res) {
                     var username = res.data.user.username;
-                    alert('success', 'Account Created!', 'Welcome ' + username + '!');
+                    var message = 'Welcome ' + username + '! Please activate your account in the next couple days.';
+                    alert('success', 'Account Created!', message);
                 })
                 .catch(function (err) {
                     alert('warning', 'Something went wrong', 'Username exists. Please login.');
