@@ -8,24 +8,32 @@
  * Controller of the psJwtApp
  */
 angular.module('psJwtApp')
-    .controller('LoginController', function ($scope, alert, auth) {
-        $scope.submit = function () {
-            auth.login($scope.username, $scope.password)
-                .then(function (res) {
-                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.data.user.username + '!');
-                })
-                .catch(errorHandler);
-        };
+    .controller('LoginController', function ($scope, $state, $auth, alert) {
 
-        $scope.google = function () {
-            auth.googleAuth()
-                .then(function (res) {
-                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.user.displayName + '!');
-                })
-                .catch(errorHandler);
-        };
-
-        function errorHandler (err) {
+        function errorHandler(err) {
             alert('warning', 'Something went wrong', err.data.message);
         }
+
+        $scope.submit = function () {
+            var user = {
+                username: $scope.username,
+                password: $scope.password
+            };
+
+            $auth.login(user)
+                .then(function (res) {
+                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.data.user.username + '!');
+                    $state.go('main');
+                })
+                .catch(errorHandler);
+        };
+
+        $scope.authenticate = function (provider) {
+            $auth.authenticate(provider)
+                .then(function (res) {
+                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.data.user.displayName + '!');
+                    $state.go('main');
+                })
+                .catch(errorHandler);
+        };
     });

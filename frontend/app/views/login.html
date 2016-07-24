@@ -34,8 +34,13 @@
     </a>
 
     <button class="btn btn-lg btn-default btn-block"
-            ng-click="google()"
+            ng-click="authenticate('google')"
             type="button">
         Google
+    </button>
+    <button class="btn btn-lg btn-default btn-block"
+            ng-click="authenticate('facebook')"
+            type="button">
+        Facebook
     </button>
 </form>

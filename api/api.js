@@ -1,10 +1,13 @@
-var express = require('express');
 var bodyParser = require('body-parser');
+var config = require('./services/config');
+var createAndSendToken = require('./services/jwt');
+var express = require('express');
+var facebookAuth = require('./services/facebookAuth');
 var jwt = require('jwt-simple');
 var mongoose = require('mongoose');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
 var request = require('request');
+var LocalStrategy = require('passport-local').Strategy;
 var User = require('./models/User');
 
 
@@ -21,20 +24,6 @@ app.use(function (req, res, next) {
 
     next();
 });
-
-function createAndSendToken(user, req, res) {
-    var payload = {
-        iss: req.hostname,
-        sub: user.id
-    };
-
-    var token = jwt.encode(payload, "temporarySecretKey");
-
-    res.status(200).send({
-        user: user.toJSON(),
-        token: token
-    });
-}
 
 // PASSPORT config
 var strategyOptions = {
@@ -96,23 +85,24 @@ app.post('/register', passport.authenticate('local-register'), function (req, re
 app.post('/login', passport.authenticate('local-login'), function (req, res) {
     createAndSendToken(req.user, req, res);
 });
+
+app.post('/auth/facebook', facebookAuth);
 app.post('/auth/google', function (req, res, next) {
     var url = 'https://accounts.google.com/o/oauth2/token';
     var apiUrl = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
-    var googleClientSecret = 'someGoogleClientSecret';
+
     var params = {
         client_id: req.body.clientId,
         redirect_uri: req.body.redirectUri,
         code: req.body.code,
         grant_type: 'authorization_code',
-        client_secret: googleClientSecret
+        client_secret: config.GOOGLE_SECRET
     };
 
     request.post(url, {
         json: true,
         form: params
     }, function (err, response, token) {
-        console.log(token);
         var accessToken = token.access_token;
         var headers = {
             Authorization: 'Bearer ' + accessToken
@@ -155,7 +145,7 @@ app.get('/jobs', function(req, res) {
         });
     }
     token = req.headers.authorization.split(' ')[1];
-    payload = jwt.decode(token, "temporarySecretKey");
+    payload = jwt.decode(token, config.TOKEN_SECRET);
 
     if (!payload.sub) {
         res.status(401).send({
@@ -168,6 +158,6 @@ app.get('/jobs', function(req, res) {
 
 mongoose.connect('mongodb://localhost/psjwt');
 
-var server = app.listen(3000, function () {
+var server = app.listen(config.SERVER_PORT, function () {
     console.log('api listening on ', server.address().port);
 });

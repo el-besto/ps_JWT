@@ -1,5 +1,5 @@
 angular.module('psJwtApp')
-    .config(function ($urlRouterProvider, $stateProvider, $httpProvider) {
+    .config(function ($urlRouterProvider, $stateProvider, $httpProvider, $authProvider, API_URL) {
         'use strict';
 
         $urlRouterProvider.otherwise('/');
@@ -28,6 +28,18 @@ angular.module('psJwtApp')
                 templateUrl: '/views/jobs.html',
                 controller: 'JobsController'
             });
+
+        // satellizer config
+        $authProvider.loginUrl = API_URL + 'login';
+        $authProvider.signupUrl = API_URL + 'register';
+        $authProvider.facebook({
+            clientId: 'FACEBOOK_CLIENT_ID',
+            url: API_URL + 'auth/facebook'
+        });
+        $authProvider.google({
+            clientId: 'someGoogleClientId',
+            url: API_URL + 'auth/google'
+        });
 
         $httpProvider.interceptors.push('authInterceptor');
     })

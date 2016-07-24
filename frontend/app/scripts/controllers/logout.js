@@ -8,7 +8,7 @@
  * Controller of the psJwtApp
  */
 angular.module('psJwtApp')
-    .controller('LogoutController', function ($state, authToken) {
-        authToken.removeToken();
+    .controller('LogoutController', function ($state, $auth) {
+        $auth.logout();
         $state.go('main');
     });
