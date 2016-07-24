@@ -34,6 +34,7 @@ app.post('/login', passport.authenticate('local-login'), function (req, res) {
 });
 app.post('/auth/facebook', facebookAuth);
 app.post('/auth/google', googleAuth);
+app.get('/auth/verifyEmail', emailVerification.handler);
 // secured resource
 app.get('/jobs', jobs);
 
