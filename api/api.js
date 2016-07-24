@@ -11,7 +11,6 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('./services/localStrategy');
 
-emailVerification.send('fake@example.com');
 
 var app = express();
 app.use(bodyParser.json());
@@ -27,6 +26,7 @@ passport.use('local-login', LocalStrategy.login);
 
 // ROUTES
 app.post('/register', passport.authenticate('local-register'), function (req, res) {
+    emailVerification.send(req.user.username, res);
     createAndSendToken(req.user, req.hostname, res);
 });
 app.post('/login', passport.authenticate('local-login'), function (req, res) {
