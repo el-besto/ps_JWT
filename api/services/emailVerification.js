@@ -25,9 +25,9 @@ function getHtml(token) {
     return template(emailModel);
 }
 
-exports.send = function (email, res) {
+exports.send = function (username, res) {
     var payload = {
-        sub: email
+        sub: username
     };
     var token = jwt.encode(payload, config.EMAIL_SECRET);
 
@@ -43,7 +43,7 @@ exports.send = function (email, res) {
 
     var mailOptions = {
         from: 'Accounts <'+ config.EMAIL_ADMIN_EMAIL +'>',
-        to: email,
+        to: username,
         subject: 'psJWT Account Verification',
         html: getHtml(token)
     };
