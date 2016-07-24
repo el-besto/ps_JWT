@@ -1,5 +1,5 @@
 angular.module('psJwtApp')
-    .config(function ($urlRouterProvider, $stateProvider, $httpProvider) {
+    .config(function ($urlRouterProvider, $stateProvider, $httpProvider, $authProvider, API_URL) {
         'use strict';
 
         $urlRouterProvider.otherwise('/');
@@ -28,6 +28,12 @@ angular.module('psJwtApp')
                 templateUrl: '/views/jobs.html',
                 controller: 'JobsController'
             });
+
+        // satellizer config
+        $authProvider.google({
+            clientId: 'someGoogleClientId',
+            url: API_URL + 'auth/google'
+        });
 
         $httpProvider.interceptors.push('authInterceptor');
     })

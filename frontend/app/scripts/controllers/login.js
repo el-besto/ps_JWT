@@ -8,7 +8,7 @@
  * Controller of the psJwtApp
  */
 angular.module('psJwtApp')
-    .controller('LoginController', function ($scope, alert, auth) {
+    .controller('LoginController', function ($scope, alert, auth, $auth) {
         $scope.submit = function () {
             auth.login($scope.username, $scope.password)
                 .then(function (res) {
@@ -17,10 +17,10 @@ angular.module('psJwtApp')
                 .catch(errorHandler);
         };
 
-        $scope.google = function () {
-            auth.googleAuth()
+        $scope.authenticate = function (provider) {
+            $auth.authenticate(provider)
                 .then(function (res) {
-                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.user.displayName + '!');
+                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.data.user.displayName + '!');
                 })
                 .catch(errorHandler);
         };
