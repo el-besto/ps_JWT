@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var jwt = require('jwt-simple');
+var moment = require('moment');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -25,7 +26,8 @@ app.use(function (req, res, next) {
 function createAndSendToken(user, req, res) {
     var payload = {
         iss: req.hostname,
-        sub: user.id
+        sub: user.id,
+        ext: moment().add(10, 'days').unix()
     };
 
     var token = jwt.encode(payload, "temporarySecretKey");
