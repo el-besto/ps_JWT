@@ -32,14 +32,14 @@ module.exports = function (req, res, next) {
             User.findOne({ googleId: profile.sub }, function (err, foundUser) {
                 var newUser;
                 if (foundUser) {
-                    return createAndSendToken(foundUser, req, res);
+                    return createAndSendToken(foundUser, req.hostname, res);
                 }
                 newUser = new User();
                 newUser.googleId = profile.sub;
                 newUser.displayName = profile.name;
                 newUser.save(function (err) {
                     if (err) { return next(err); }
-                    createAndSendToken(newUser, req, res);
+                    createAndSendToken(newUser, req.hostname, res);
                 });
             });
         });

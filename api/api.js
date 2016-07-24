@@ -27,10 +27,10 @@ passport.use('local-login', LocalStrategy.login);
 
 // ROUTES
 app.post('/register', passport.authenticate('local-register'), function (req, res) {
-    createAndSendToken(req.user, req, res);
+    createAndSendToken(req.user, req.hostname, res);
 });
 app.post('/login', passport.authenticate('local-login'), function (req, res) {
-    createAndSendToken(req.user, req, res);
+    createAndSendToken(req.user, req.hostname, res);
 });
 app.post('/auth/facebook', facebookAuth);
 app.post('/auth/google', googleAuth);
