@@ -8,7 +8,7 @@
  * Service in the psJwtApp.
  */
 angular.module('psJwtApp')
-    .service('auth', function ($http, $state, $window, authToken, API_URL) {
+    .service('auth', function ($http, $q, $state, $window, authToken, API_URL) {
         var loginUrl = API_URL + 'login';
         var registerUrl = API_URL + 'register';
         var googleClientId = 'someGoogleClientId';
@@ -36,6 +36,7 @@ angular.module('psJwtApp')
                 .success(authSuccessful);
         };
         this.googleAuth = function () {
+            var deferred = $q.defer();
             var googleAuthUrl = 'https://accounts.google.com/o/oauth2/auth?' + googleUrlBuilder.join('&');
             // options below will not be centered on dual-monitors
             // need alternative implementation.
@@ -44,6 +45,7 @@ angular.module('psJwtApp')
                 ',top=' + ($window.outerHeight - 500) / 2.5;
 
             var popup = $window.open(googleAuthUrl, 'Login with Google', options);
+
             $window.focus();
             $window.addEventListener('message', function (event) {
                 if (event.origin === $window.location.origin) {
@@ -53,8 +55,12 @@ angular.module('psJwtApp')
                         code: code,
                         clientId: googleClientId,
                         redirectUri: $window.location.origin
+                    }).success(function (jwt) {
+                        authSuccessful(jwt);
+                        deferred.resolve(jwt);
                     });
                 }
             });
+            return deferred.promise;
         };
     });
