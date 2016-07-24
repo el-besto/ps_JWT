@@ -96,7 +96,7 @@ app.post('/register', passport.authenticate('local-register'), function (req, re
 app.post('/login', passport.authenticate('local-login'), function (req, res) {
     createAndSendToken(req.user, req, res);
 });
-app.post('/auth/google', function (req, res) {
+app.post('/auth/google', function (req, res, next) {
     var url = 'https://accounts.google.com/o/oauth2/token';
     var apiUrl = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
     var googleClientSecret = 'someGoogleClientSecret';
@@ -123,7 +123,19 @@ app.post('/auth/google', function (req, res) {
             headers: headers,
             json: true
         }, function (err, response, profile) {
-            console.log(profile);
+            User.findOne({ googleId: profile.sub }, function (err, foundUser) {
+                var newUser;
+                if (foundUser) {
+                    return createAndSendToken(foundUser, req, res);
+                }
+                newUser = new User();
+                newUser.googleId = profile.sub;
+                newUser.displayName = profile.name;
+                newUser.save(function (err) {
+                    if (err) { return next(err); }
+                    createAndSendToken(newUser, req, res);
+                });
+            });
         });
     });
 });
