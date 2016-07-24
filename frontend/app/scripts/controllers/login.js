@@ -14,8 +14,18 @@ angular.module('psJwtApp')
                 .then(function (res) {
                     alert('success', 'Welcome!', 'Thanks for coming back ' + res.data.user.username + '!');
                 })
-                .catch(function (err) {
-                    alert('warning', 'Something went wrong', err.data.message);
-                });
+                .catch(errorHandler);
         };
+
+        $scope.google = function () {
+            auth.googleAuth()
+                .then(function (res) {
+                    alert('success', 'Welcome!', 'Thanks for coming back ' + res.user.displayName + '!');
+                })
+                .catch(errorHandler);
+        };
+
+        function errorHandler (err) {
+            alert('warning', 'Something went wrong', err.data.message);
+        }
     });
